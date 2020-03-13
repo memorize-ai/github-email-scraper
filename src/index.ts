@@ -97,7 +97,7 @@ const getEmailsFromLogins = async (logins: string[], repository: Repository) => 
 			
 			console.log(chalk.green.bold(` DONE: ${email}`))
 		} catch (error) {
-			if (error.code === '404') {
+			if (error.code === 404) {
 				console.log(chalk.red.bold(` ERROR: This user does not exist`))
 				
 				repository.stargazers = repository.stargazers.filter(otherLogin => otherLogin !== login)
@@ -123,7 +123,7 @@ const main = async (): Promise<void> => {
 	} catch (error) {
 		console.log(chalk.red.bold(` ERROR: ${error.message}`))
 		
-		if (error.code === '403') {
+		if (error.code === 403) {
 			console.log(chalk.cyan.bold(
 				'RETRYING (1 hour): The rate limit was reached. 1 hour remaining (with an extra minute to guarantee the rate limit was reloaded).'
 			))
