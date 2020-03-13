@@ -1,0 +1,18 @@
+{
+	"name": "memorize.ai-github-email-scraper",
+	"main": "lib/index.js",
+	"scripts": {
+		"build": "tsc",
+		"start": "npm run build && node lib"
+	},
+	"dependencies": {
+		"axios": "^0.19.2",
+		"chalk": "^3.0.0"
+	},
+	"devDependencies": {
+		"@types/node": "^13.9.0",
+		"tslint": "^6.1.0",
+		"typescript": "^3.8.3"
+	},
+	"private": true
+}
