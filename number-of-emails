@@ -1,0 +1,6 @@
+#!/usr/bin/env node
+
+console.log(
+	Object.values(require('./products/users.json'))
+		.reduce((acc, user) => user ? acc + 1 : acc, 0)
+)
