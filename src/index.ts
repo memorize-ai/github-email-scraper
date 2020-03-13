@@ -24,6 +24,9 @@ const saveRepositories = () =>
 const saveUsers = () =>
 	writeFile(join(__dirname, '../products/users.json'), JSON.stringify(users))
 
+const getErrorCode = (error: any): number =>
+	error.response.status
+
 const getData = async (url: string) => {
 	const response = await axios.get(url, {
 		headers: {
@@ -97,9 +100,7 @@ const getEmailsFromLogins = async (logins: string[], repository: Repository) => 
 			
 			console.log(chalk.green.bold(` DONE: ${email}`))
 		} catch (error) {
-			console.log(error, error.code, typeof error.code)
-			
-			if (error.code === '404') {
+			if (getErrorCode(error) === 404) {
 				console.log(chalk.red.bold(` ERROR: This user does not exist`))
 				
 				repository.stargazers = repository.stargazers.filter(otherLogin => otherLogin !== login)
@@ -125,7 +126,7 @@ const main = async (): Promise<void> => {
 	} catch (error) {
 		console.log(chalk.red.bold(` ERROR: ${error.message}`))
 		
-		if (error.code === '403') {
+		if (getErrorCode(error) === 403) {
 			console.log(chalk.cyan.bold(
 				'RETRYING (1 hour): The rate limit was reached. 1 hour remaining (with an extra minute to guarantee the rate limit was reloaded).'
 			))
