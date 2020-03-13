@@ -1,0 +1,52 @@
+#!/usr/bin/env node
+
+const { writeFileSync: writeFile } = require('fs')
+const { join } = require('path')
+
+const args = process.argv.slice(2)
+const repositories = require('./products/repositories.json')
+
+switch (args[0]) {
+	case undefined:
+		console.log(Object.keys(repositories))
+		break
+	case 'add': {
+		const id = args[1]
+		
+		if (!id) {
+			console.error('Error: You must specify a repository ID')
+			break
+		}
+		
+		if (repositories[id]) {
+			console.error('Error: Already exists')
+			break
+		}
+		
+		repositories[id] = { loaded: false, stargazers: [] }
+		writeFile(join(__dirname, 'products/repositories.json'), JSON.stringify(repositories))
+		
+		break
+	}
+	case 'remove': {
+		const id = args[1]
+		
+		if (!id) {
+			console.error('Error: You must specify a repository ID')
+			break
+		}
+		
+		if (!repositories[id]) {
+			console.error('Error: Does not exist')
+			break
+		}
+		
+		delete repositories[id]
+		writeFile(join(__dirname, 'products/repositories.json'), JSON.stringify(repositories))
+		
+		break
+	}
+	default:
+		console.error(`Unkown option ${args[0]}`)
+		break
+}

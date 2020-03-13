@@ -40,17 +40,21 @@ const getStargazerLoginsFromRepository = async (id: string, repository: Reposito
 	
 	const stargazers: string[] = []
 	
-	for (let page = 1;; page++) {
-		process.stdout.write(chalk.yellow.bold(`Loading stargazers for repository ${id} on page ${page}...`))
-		
-		const chunk = await getData(`https://api.github.com/repos/${id}/stargazers?page=${page}`)
-		
-		if (!chunk.length)
+	for (let page = 1;; page++)
+		try {
+			process.stdout.write(chalk.yellow.bold(`Loading stargazers for repository ${id} on page ${page}...`))
+			
+			const chunk = await getData(`https://api.github.com/repos/${id}/stargazers?page=${page}`)
+			
+			if (!chunk.length)
+				break
+			
+			stargazers.push(...chunk.map(({ login }: { login: string }) => login))
+			console.log(chalk.green.bold(' DONE'))
+		} catch (error) {
+			console.log(chalk.red.bold(` ERROR: ${error.toString()}`))
 			break
-		
-		stargazers.push(...chunk.map(({ login }: { login: string }) => login))
-		console.log(chalk.green.bold(' DONE'))
-	}
+		}
 	
 	repository.loaded = true
 	repository.stargazers = stargazers
