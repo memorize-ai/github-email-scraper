@@ -94,7 +94,12 @@ const getEmailsFromLogins = async (logins: string[]) => {
 	}
 }
 
-if (require.main === module) (async () => {
-	for (const [id, repository] of Object.entries(repositories))
-		await getEmailsFromLogins(await getStargazerLoginsFromRepository(id, repository))
-})()
+if (require.main === module)
+	(async () => {
+		try {
+			for (const [id, repository] of Object.entries(repositories))
+				await getEmailsFromLogins(await getStargazerLoginsFromRepository(id, repository))
+		} catch (error) {
+			console.log(chalk.red.bold(` ERROR: ${error.message}`))
+		}
+	})()
