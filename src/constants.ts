@@ -1,1 +1,4 @@
-export const GITHUB_API_TOKEN = '4ac81ba2f1e2ca37d5ab986415f0f4fcbf2379ca'
+import { readFileSync as readFile } from 'fs'
+import { join } from 'path'
+
+export const GITHUB_API_TOKEN = readFile(join(__dirname, '../protected/github-api-token.txt')).toString().trim()

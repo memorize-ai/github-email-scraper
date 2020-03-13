@@ -12,6 +12,10 @@ git clone https://github.com/kenmueller/memorize.ai-github-email-scraper.git
 npm i
 ```
 
+## Authenticate
+
+Put your GitHub API token in `protected/github-api-token.txt`
+
 ## Run
 
 ```bash
