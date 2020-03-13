@@ -63,39 +63,51 @@ const getStargazerLoginsFromRepository = async (id: string, repository: Reposito
 	return stargazers
 }
 
-const getEmailsFromLogins = async (logins: string[]) => {
-	for (const login of logins) {
-		if (users[login] !== undefined)
-			continue
-		
-		process.stdout.write(chalk.yellow.bold(`Loading email for user ${login}...`))
-		
-		const events = await getData(`https://api.github.com/users/${login}/events`)
-		
-		const match = JSON.stringify(events).match(/"email":"(.+?)"/)
-		const email = match && match[1]
-		
-		if (!(typeof email === 'string' && /.+?@.+\..+/.test(email))) {
-			users[login] = null
+const getEmailsFromLogins = async (logins: string[], repository: Repository) => {
+	for (const login of logins)
+		try {
+			if (users[login] !== undefined)
+				continue
+			
+			process.stdout.write(chalk.yellow.bold(`Loading email for user ${login}...`))
+			
+			const events = await getData(`https://api.github.com/users/${login}/events`)
+			
+			const match = JSON.stringify(events).match(/"email":"(.+?)"/)
+			const email = match && match[1]
+			
+			if (!(typeof email === 'string' && /.+?@.+\..+/.test(email))) {
+				users[login] = null
+				saveUsers()
+				
+				console.log(chalk.red.bold(` ERROR: Unable to find their email in their events`))
+				continue
+			}
+			
+			if (/^github@/i.test(email) || /github\.com$/i.test(email)) {
+				users[login] = null
+				saveUsers()
+				
+				console.log(chalk.blue.bold(' ERROR: Their email appears to be owned by GitHub'))
+				continue
+			}
+			
+			users[login] = { email, sent: false }
 			saveUsers()
 			
-			console.log(chalk.red.bold(` ERROR: Unable to find their email in their events`))
-			continue
-		}
-		
-		if (/^github@/i.test(email) || /github\.com$/i.test(email)) {
-			users[login] = null
-			saveUsers()
+			console.log(chalk.green.bold(` DONE: ${email}`))
+		} catch (error) {
+			if (error.code === '404') {
+				console.log(chalk.red.bold(` ERROR: This user does not exist`))
+				
+				repository.stargazers = repository.stargazers.filter(otherLogin => otherLogin !== login)
+				saveRepositories()
+				
+				continue
+			}
 			
-			console.log(chalk.blue.bold(' ERROR: Their email appears to be owned by GitHub'))
-			continue
+			throw error
 		}
-		
-		users[login] = { email, sent: false }
-		saveUsers()
-		
-		console.log(chalk.green.bold(` DONE: ${email}`))
-	}
 }
 
 const sleep = (duration: number): Promise<void> =>
@@ -104,7 +116,10 @@ const sleep = (duration: number): Promise<void> =>
 const main = async (): Promise<void> => {
 	try {
 		for (const [id, repository] of Object.entries(repositories))
-			await getEmailsFromLogins(await getStargazerLoginsFromRepository(id, repository))
+			await getEmailsFromLogins(
+				await getStargazerLoginsFromRepository(id, repository),
+				repository
+			)
 	} catch (error) {
 		console.log(chalk.red.bold(` ERROR: ${error.message}`))
 		
