@@ -108,7 +108,7 @@ const main = async (): Promise<void> => {
 	} catch (error) {
 		console.log(chalk.red.bold(` ERROR: ${error.message}`))
 		
-		if (error.code === '503') {
+		if (error.code === '403') {
 			console.log(chalk.cyan.bold(
 				'RETRYING (1 hour): The rate limit was reached. 1 hour remaining (with an extra minute to guarantee the rate limit was reloaded).'
 			))
