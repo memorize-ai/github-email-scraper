@@ -98,12 +98,29 @@ const getEmailsFromLogins = async (logins: string[]) => {
 	}
 }
 
+const sleep = (duration: number): Promise<void> =>
+	new Promise(resolve => setTimeout(resolve, duration))
+
+const main = async (): Promise<void> => {
+	try {
+		for (const [id, repository] of Object.entries(repositories))
+			await getEmailsFromLogins(await getStargazerLoginsFromRepository(id, repository))
+	} catch (error) {
+		console.log(chalk.red.bold(` ERROR: ${error.message}`))
+		
+		if (error.code === '503') {
+			console.log(chalk.cyan.bold(
+				'RETRYING (1 hour): The rate limit was reached. 1 hour remaining (with an extra minute to guarantee the rate limit was reloaded).'
+			))
+			await sleep(1000 * 60 * 61)
+		} else
+			console.log(chalk.cyan.bold(
+				'RETRYING (now): An unknown error occurred.'
+			))
+		
+		return main()
+	}
+}
+
 if (require.main === module)
-	(async () => {
-		try {
-			for (const [id, repository] of Object.entries(repositories))
-				await getEmailsFromLogins(await getStargazerLoginsFromRepository(id, repository))
-		} catch (error) {
-			console.log(chalk.red.bold(` ERROR: ${error.message}`))
-		}
-	})()
+	main()
