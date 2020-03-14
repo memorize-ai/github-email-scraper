@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-const users = Object.entries(require('./products/users.json'))
+const users = Object.values(require('./products/users.json'))
 
 const total = users.length
-const badEmails = users.reduce((acc, [, user]) => user ? acc : acc + 1, 0)
-const goodEmails = users.reduce((acc, [, user]) => user ? acc + 1 : acc, 0)
+const badEmails = users.reduce((acc, user) => user ? acc : acc + 1, 0)
+const goodEmails = users.reduce((acc, user) => user ? acc + 1 : acc, 0)
 
 console.log(`Total: ${total}`)
 console.log(`Bad emails: ${badEmails} (${(badEmails / total * 100).toFixed(2)}%)`)
