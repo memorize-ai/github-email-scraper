@@ -3,7 +3,7 @@ import { join } from 'path'
 import axios from 'axios'
 import * as chalk from 'chalk'
 
-import { GITHUB_API_TOKEN } from './constants'
+import { GITHUB_API_TOKEN, API_RATE_LIMIT_DELAY } from './constants'
 
 interface Repository {
 	loaded: boolean
@@ -128,13 +128,13 @@ const main = async (): Promise<void> => {
 		
 		if (getErrorCode(error) === 403) {
 			console.log(chalk.cyan.bold(
-				'RETRYING (1 hour): The rate limit was reached. 1 hour remaining (with an extra minute to guarantee the rate limit was reloaded).'
+				`RETRYING (${
+					new Date(Date.now() + API_RATE_LIMIT_DELAY).toLocaleString()
+				}): The rate limit was reached. 1 hour remaining (with an extra minute to guarantee the rate limit was reloaded).`
 			))
-			await sleep(1000 * 60 * 61)
+			await sleep(API_RATE_LIMIT_DELAY)
 		} else
-			console.log(chalk.cyan.bold(
-				'RETRYING (now): An unknown error occurred.'
-			))
+			console.log(chalk.cyan.bold('RETRYING (now): An unknown error occurred.'))
 		
 		return main()
 	}
