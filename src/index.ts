@@ -1,9 +1,15 @@
 import { writeFileSync as writeFile } from 'fs'
-import { join } from 'path'
 import axios from 'axios'
 import * as chalk from 'chalk'
 
-import { GITHUB_API_TOKEN, API_RATE_LIMIT_DELAY, DEFAULT_TIME_ZONE } from './constants'
+import {
+	GITHUB_API_TOKEN,
+	REPOSITORIES_PATH,
+	USERS_PATH,
+	API_RATE_LIMIT_DELAY,
+	DEFAULT_TIME_ZONE
+} from './constants'
+import backup from './backup'
 
 interface Repository {
 	loaded: boolean
@@ -15,14 +21,14 @@ interface User {
 	sent: boolean
 }
 
-const repositories: Record<string, Repository> = require('../products/repositories.json')
-const users: Record<string, User | null> = require('../products/users.json')
+const repositories: Record<string, Repository> = require(REPOSITORIES_PATH)
+const users: Record<string, User | null> = require(USERS_PATH)
 
 const saveRepositories = () =>
-	writeFile(join(__dirname, '../products/repositories.json'), JSON.stringify(repositories))
+	writeFile(REPOSITORIES_PATH, JSON.stringify(repositories))
 
 const saveUsers = () =>
-	writeFile(join(__dirname, '../products/users.json'), JSON.stringify(users))
+	writeFile(USERS_PATH, JSON.stringify(users))
 
 const getErrorCode = (error: any): number =>
 	error.response.status
@@ -133,6 +139,7 @@ const main = async (): Promise<void> => {
 						.toLocaleString('en-US', { timeZone: DEFAULT_TIME_ZONE })
 				}): The rate limit was reached`
 			))
+			backup()
 			await sleep(API_RATE_LIMIT_DELAY)
 		} else
 			console.log(chalk.cyan.bold('RETRYING (now): An unknown error occurred'))

@@ -3,14 +3,18 @@
 	"main": "lib/index.js",
 	"scripts": {
 		"build": "tsc",
-		"start": "npm run build && node lib"
+		"start": "npm run build && node lib",
+		"backup": "npm run build && node lib/backup.js"
 	},
 	"dependencies": {
 		"axios": "^0.19.2",
-		"chalk": "^3.0.0"
+		"chalk": "^3.0.0",
+		"firebase-admin": "^8.10.0",
+		"uuid": "^7.0.2"
 	},
 	"devDependencies": {
 		"@types/node": "^13.9.0",
+		"@types/uuid": "^7.0.0",
 		"tslint": "^6.1.0",
 		"typescript": "^3.8.3"
 	},
