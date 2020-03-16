@@ -30,7 +30,10 @@ export default async () => {
 				destination: `backups/github-users-${now}.json`,
 				public: false,
 				metadata: {
-					contentType: 'application/json'
+					contentType: 'application/json',
+					metadata: {
+						firebaseStorageDownloadTokens: uuid()
+					}
 				}
 			})
 	])
