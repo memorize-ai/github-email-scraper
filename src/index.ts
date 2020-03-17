@@ -62,6 +62,10 @@ const getStargazerLoginsFromRepository = async (id: string, repository: Reposito
 			console.log(chalk.green.bold(' DONE'))
 		} catch (error) {
 			console.log(chalk.red.bold(` ERROR: ${error.toString()}`))
+			
+			if (getErrorCode(error) === 403)
+				throw error
+			
 			break
 		}
 	
