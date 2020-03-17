@@ -1,9 +1,8 @@
 import * as chalk from 'chalk'
 import { v4 as uuid } from 'uuid'
 
-import { storage } from './firebase-admin'
-
 import { REPOSITORIES_PATH, USERS_PATH, DEFAULT_TIME_ZONE } from './constants'
+import { storage } from './firebase-admin'
 
 export default async () => {
 	process.stdout.write(chalk.gray.bold('Backing up...'))
