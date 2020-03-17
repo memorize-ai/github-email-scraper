@@ -13,28 +13,26 @@ export default async () => {
 		.replace(/,/g, '')
 	
 	await Promise.all([
-		storage
-			.upload(REPOSITORIES_PATH, {
-				destination: `backups/github-repositories-${now}.json`,
-				public: false,
+		storage.upload(REPOSITORIES_PATH, {
+			destination: `backups/github-repositories-${now}.json`,
+			public: false,
+			metadata: {
+				contentType: 'application/json',
 				metadata: {
-					contentType: 'application/json',
-					metadata: {
-						firebaseStorageDownloadTokens: uuid()
-					}
+					firebaseStorageDownloadTokens: uuid()
 				}
-			}),
-		storage
-			.upload(USERS_PATH, {
-				destination: `backups/github-users-${now}.json`,
-				public: false,
+			}
+		}),
+		storage.upload(USERS_PATH, {
+			destination: `backups/github-users-${now}.json`,
+			public: false,
+			metadata: {
+				contentType: 'application/json',
 				metadata: {
-					contentType: 'application/json',
-					metadata: {
-						firebaseStorageDownloadTokens: uuid()
-					}
+					firebaseStorageDownloadTokens: uuid()
 				}
-			})
+			}
+		})
 	])
 	
 	console.log(chalk.green.bold(' DONE'))
