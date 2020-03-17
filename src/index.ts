@@ -61,11 +61,10 @@ const getStargazerLoginsFromRepository = async (id: string, repository: Reposito
 			stargazers.push(...chunk.map(({ login }: { login: string }) => login))
 			console.log(chalk.green.bold(' DONE'))
 		} catch (error) {
-			console.log(chalk.red.bold(` ERROR: ${error.toString()}`))
-			
 			if (getErrorCode(error) === 403)
 				throw error
 			
+			console.log(chalk.red.bold(` ERROR: ${error.toString()}`))
 			break
 		}
 	
