@@ -7,7 +7,7 @@
 		"backup": "npm run build && node lib/backup.js"
 	},
 	"dependencies": {
-		"axios": "^0.19.2",
+		"axios": "^0.21.1",
 		"chalk": "^3.0.0",
 		"firebase-admin": "^8.10.0",
 		"uuid": "^7.0.2"
